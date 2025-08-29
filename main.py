@@ -1,8 +1,5 @@
 from fastapi import FastAPI
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
-from sqlalchemy import Column, Integer, String, Text, Date, ForeignKey, DateTime
-from pydantic import BaseModel
+
 from datetime import datetime
 
 app = FastAPI(title="Simple Medical Records API")
@@ -11,38 +8,30 @@ app = FastAPI(title="Simple Medical Records API")
 async def home():
   return "Home"
 
-Base = declarative_base()
-engine = create_engine("sqlite:///medi-records.db", echo=True)
+@app.post('/users', tags=["User"])
+async def create_user():
+  return "Create User"
 
-@app.route("/")
-def read_root():
-    return {"message": "Welcome to the Simple Medical Records API"}
+@app.get('/users', tags=["User"])
+async def get_users():
+  return "Get Users"
 
+@app.post('/patients', tags=["Patient"])
+async def create_patient():
+  return "Create Patient"
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    role = Column(String)
-    
-class Patient(Base):
-    __tablename__ = "patients"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    age = Column(String)
-    records = relationship("MedicalRecord", back_populates="patient")
+@app.get('/patients', tags=["Patient"])
+async def get_patients():
+  return "Get Patients"
 
-class MedicalRecord(Base):
-    __tablename__ = "medical_records"
-    id = Column(Integer, primary_key=True)
-    findings = Column(Text)
-    date_created = Column(DateTime, default=datetime.now)
-    patient_id = Column(Integer, ForeignKey("patients.id"))
-    user_id = Column(Integer, ForeignKey("users.id"))
-    patient = relationship("Patient", back_populates="records")
+@app.post('/records', tags=["Medical Records"])
+async def create_medical_record():
+  return "Create Medical Record"
 
+@app.get('/records', tags=["Medical Records"])
+async def get_medical_records():
+  return "Get Medical Records"
 
-Base.metadata.create_all(bind=engine)
 
 
 if __name__ == "__main__":
