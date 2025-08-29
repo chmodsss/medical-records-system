@@ -6,8 +6,9 @@ from datetime import datetime
 from sqlalchemy import create_engine
 
 
-Base = declarative_base()
 engine = create_engine("sqlite:///medi-records.db", echo=True)
+SessionLocal = sessionmaker(bind=engine)
+Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
@@ -56,12 +57,12 @@ class SendPatient(BaseModel):
     age: int
 
 
-class CreateMedicalRecords(BaseModel):
+class CreateMedicalRecord(BaseModel):
     patient_id: int
     findings: str
 
 
-class SendMedicalRecords(BaseModel):
+class SendMedicalRecord(BaseModel):
     id: int
     patient_id: int
     findings: str
